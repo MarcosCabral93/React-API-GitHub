@@ -12,7 +12,7 @@ function Rota(){
         <Route  exact path="/">
             <Home/>
         </Route>
-        <Route exact path="/repositorio/:repositorio">
+        <Route exact path="/repositorio/:local">
             <Repositorio/>
 
         </Route>

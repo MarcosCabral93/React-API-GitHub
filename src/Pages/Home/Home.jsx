@@ -1,16 +1,36 @@
-import React,{useState, useCallback} from 'react'
+import React,{useState, useCallback, useEffect} from 'react'
 import {FaGithub, FaPlus, FaSpinner, FaBars, FaTrash} from 'react-icons/fa'
 import {Container,Form,BtnSubmit, Lista, Delete} from "./StyledHome"
+import {Link} from 'react-router-dom'
 import api from '../../Services/Services'
 function Home(){
     const [novoR, setNovoR]=useState("")
     const [repositorios, setRepositorios]=useState([])
     const [espera,setEspera]=useState(false)
+    
+    
+    useEffect(()=>{
+
+        const bd=localStorage.getItem('repo')
+        if(bd)setRepositorios(JSON.parse(bd))
+    },[])
+    
+    useEffect(()=>{
+        localStorage.setItem('repo',JSON.stringify(repositorios))
+
+
+    },[repositorios])
+
+
+
     const handleSubmit=useCallback((e) => {
         e.preventDefault()
         setEspera(true)
         async function sub(){
                 try{
+                    if(novoR==="") throw new Error("Preencha com um repositório")
+                    const valid=repositorios.find(item=> item.nome===novoR)
+                    if(valid)throw new Error("Já existe um repositório com esse nome")
                 const response= await api.get(`repos/${novoR}`)
                 const dados={
                     nome: response.data.full_name
@@ -60,7 +80,7 @@ function Home(){
                             <FaTrash size={14}/>
                         </Delete>
                         {item.nome}</span>
-                        <a href="#"> <FaBars size={15}/></a>
+                        <Link to={`/repositorio/${encodeURIComponent(item.nome)}`}> <FaBars size={15}/></Link>
                     </li>
                 )
             })}
